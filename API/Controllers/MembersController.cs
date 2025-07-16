@@ -9,8 +9,11 @@ namespace API.Controllers
 {
 
 
-    public class UsersController(DataContext context) : BaseAPIController
+    public class MembersController(AppDbContext context) : BaseAPIController
     {
+
+        private readonly AppDbContext context = context;
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
@@ -20,8 +23,8 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AppUser>> GetUser(string id)
         {
             var user = await context.Users.FindAsync(id);
             if (user == null)
@@ -32,3 +35,4 @@ namespace API.Controllers
         }
     }
 }
+

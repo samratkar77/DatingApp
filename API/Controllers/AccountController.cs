@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AccountController(DataContext context, ITokenService tokenService) : BaseAPIController
+public class AccountController(AppDbContext context, ITokenService tokenService) : BaseAPIController
 {
     [HttpPost("register")]//account/register
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
 
-        if (await UserExists(registerDto.Username))
+        if (await UserExists(registerDto.DisplayName))
         {
             return BadRequest("Username is taken");
         }
@@ -24,7 +24,8 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
         var user = new AppUser
         {
-            UserName = registerDto.Username.ToLower(),
+            DisplayName = registerDto.DisplayName.ToLower(),
+            Email = registerDto.Email,
             PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key
         };
@@ -33,7 +34,9 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
         return new UserDto
         {
-            Username = user.UserName,
+            Id = user.Id,
+            DisplayName = user.DisplayName,
+            Email = user.Email,
             Token = tokenService.CreateToken(user)
         };
     }
@@ -42,7 +45,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         var user = await context.Users
-            .FirstOrDefaultAsync(x => x.UserName.ToLower() == loginDto.Username.ToLower());
+            .FirstOrDefaultAsync(x => x.Email.ToLower() == loginDto.Email.ToLower());
 
         if (user == null) return Unauthorized("Invalid username");
 
@@ -56,13 +59,15 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
         return new UserDto
         {
-            Username = user.UserName,
+            Id = user.Id,
+            DisplayName = user.DisplayName,
+            Email = user.Email,
             Token = tokenService.CreateToken(user)
         };
     }
 
     private async Task<bool> UserExists(string username)
     {
-        return await context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+        return await context.Users.AnyAsync(x => x.DisplayName.ToLower() == username.ToLower());
     }
 }
