@@ -24,23 +24,11 @@
       </a>
     </div>
     <nav class="flex gap-3 my-2 uppercase text-lg text-white">
-      <a
-        routerLink="/members"
-        class="text-white"
-        routerLinkActive="text-accent"
-        [routerLinkActiveOptions]="{ exact: true }"
-        >Matches</a
-      >
-
-      <a routerLink="/lists" class="text-white" routerLinkActive="text-accent"
-        >List</a
-      >
-      <a
-        routerLink="/messages"
-        class="text-white"
-        routerLinkActive="text-accent"
-        >Messages</a
-      >
+      @if(accountService.currentUser(); as user){
+      <a routerLink="/members" routerLinkActive="text-accent">Matches</a>
+      <a routerLink="/lists" routerLinkActive="text-accent">List</a>
+      <a routerLink="/messages" routerLinkActive="text-accent">Messages</a>
+      }
     </nav>
     <div class="flex align-middle ml-auto gap-3">
       @if (accountService.currentUser(); as user){

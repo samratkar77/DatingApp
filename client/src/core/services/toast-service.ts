@@ -21,13 +21,7 @@ export class ToastService {
     if (!document.getElementById('toast-container')) {
       const container = document.createElement('div');
       container.id = 'toast-container';
-      container.style.position = 'fixed';
-      container.style.top = '10rem';
-      container.style.left = '50%';
-      container.style.transform = 'translateX(-50%)';
-      container.style.zIndex = '9999';
-      container.style.pointerEvents = 'none';
-      // container.className = 'toast toast-top toast-center';
+      container.className = 'toast toast-bottom toast-left show';
       document.body.appendChild(container);
     }
   }
@@ -35,25 +29,32 @@ export class ToastService {
   private createToastElement(
     message: string,
     alertclass: string,
-    duration = 50000
+    duration = 5000
   ) {
     this.createToastContainer();
     const toastContainer = document.getElementById('toast-container');
     if (!toastContainer) return;
 
     const toast = document.createElement('div');
-    toast.classList.add('alert', alertclass, 'shadow-lg');
+    toast.classList.add('alert', alertclass);
+    toast.style.marginBottom = '0';
     toast.innerHTML = `
-        <span>${message}</span>
-        <button class="ml-4 btn btn-sm btn-ghost" >x</button>`;
+      <span>${message}</span>
+      <button class="ml-4 btn btn-sm btn-ghost" >x</button>`;
     toast.querySelector('button')?.addEventListener('click', () => {
       toastContainer.removeChild(toast);
+      if (toastContainer.childElementCount === 0) {
+        toastContainer.remove();
+      }
     });
     toastContainer.append(toast);
 
     setTimeout(() => {
       if (toastContainer.contains(toast)) {
         toastContainer.removeChild(toast);
+        if (toastContainer.childElementCount === 0) {
+          toastContainer.remove();
+        }
       }
     }, duration);
   }

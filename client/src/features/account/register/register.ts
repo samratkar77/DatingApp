@@ -7,8 +7,8 @@ import { AccountService } from '../../../core/services/account-service';
   selector: 'app-register',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css',
+  templateUrl: './register.html',
+  styleUrl: './register.css',
 })
 export class RegisterComponent {
   private accountService = inject(AccountService);
