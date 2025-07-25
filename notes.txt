@@ -4,3 +4,7 @@ MakeCert -pe -n "CN=localhost" -b 01/01/2023 -e 01/01/2028 -eku 1.3.6.1.5.5.7.3.
 
 dotnet watch 
 npm start
+
+ng serve --ssl --ssl-key "server.key" --ssl-cert "server.crt"
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -config openssl.cnf

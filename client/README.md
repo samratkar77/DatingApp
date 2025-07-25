@@ -1,6 +1,6 @@
 # Client
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.1.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0-rc.3.
 
 ## Development server
 

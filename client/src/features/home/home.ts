@@ -1,16 +1,16 @@
 import { Component, Input, signal } from '@angular/core';
-import { RegisterComponent } from '../account/register/register';
+import { Register } from "../account/register/register";
 import { User } from '../../types/user';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
-  imports: [RegisterComponent],
+  imports: [Register],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrl: './home.css'
 })
-export class HomeComponent {
+export class Home {
   protected registerMode = signal(false);
+
   showRegister(value: boolean) {
     this.registerMode.set(value);
   }

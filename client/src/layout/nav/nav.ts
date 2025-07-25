@@ -6,31 +6,27 @@ import { ToastService } from '../../core/services/toast-service';
 
 @Component({
   selector: 'app-nav',
-  standalone: true,
   imports: [FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './nav.html',
-  styleUrl: './nav.css',
+  styleUrl: './nav.css'
 })
-export class NavComponent {
+export class Nav {
   protected accountService = inject(AccountService);
   private router = inject(Router);
   private toast = inject(ToastService);
-  protected creds: any = {};
+  protected creds: any = {}
 
   login() {
-    console.log('Login method called');
     this.accountService.login(this.creds).subscribe({
       next: () => {
-        console.log('Login success, calling toast');
         this.router.navigateByUrl('/members');
-        this.toast.success('Login successful!');
+        this.toast.success('Logged in successfully');
         this.creds = {};
       },
-      error: (error) => {
-        console.log('Login error, calling toast');
+      error: error => {
         this.toast.error(error.error);
-      },
-    });
+      }
+    })
   }
 
   logout() {

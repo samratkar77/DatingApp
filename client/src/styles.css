@@ -1,9 +1,2 @@
 @import "tailwindcss";
 @plugin "daisyui";
-
-/* a.text-accent {
-  color: var(
-    --fallback-accent,
-    #f4a03f
-  ) !important; /* DaisyUI accent fallback 
-} */

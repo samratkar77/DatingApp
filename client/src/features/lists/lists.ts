@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-lists',
-  standalone: true,
   imports: [],
   templateUrl: './lists.html',
-  styleUrl: './lists.css',
+  styleUrl: './lists.css'
 })
-export class ListsComponent {}
+export class Lists {
+
+}

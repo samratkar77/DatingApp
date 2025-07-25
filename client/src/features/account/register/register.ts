@@ -1,30 +1,27 @@
 import { Component, inject, input, output } from '@angular/core';
-import { RegisterCreds, User } from '../../../types/user';
 import { FormsModule } from '@angular/forms';
+import { RegisterCreds, User } from '../../../types/user';
 import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-register',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './register.html',
-  styleUrl: './register.css',
+  styleUrl: './register.css'
 })
-export class RegisterComponent {
+export class Register {
   private accountService = inject(AccountService);
   cancelRegister = output<boolean>();
   protected creds = {} as RegisterCreds;
 
   register() {
     this.accountService.register(this.creds).subscribe({
-      next: (response) => {
+      next: response => {
         console.log(response);
         this.cancel();
       },
-      error: (error) => {
-        console.error('Registration failed', error);
-      },
-    });
+      error: error => console.log(error)
+    })
   }
 
   cancel() {
