@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MemberService } from '../../../core/services/member-service';
 import { ActivatedRoute } from '@angular/router';
 import { Member, Photo } from '../../../types/member';
@@ -20,6 +26,7 @@ export class MemberPhotos implements OnInit {
   private route = inject(ActivatedRoute);
   protected photos = signal<Photo[]>([]);
   protected loading = signal(false);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     const memberId = this.route.parent?.snapshot.paramMap.get('id');
@@ -37,6 +44,14 @@ export class MemberPhotos implements OnInit {
         this.memberService.editMode.set(false);
         this.loading.set(false);
         this.photos.update((photos) => [...photos, photo]);
+        console.log(
+          'Current member imageUrl before if:',
+          this.memberService.member()?.imageUrl
+        );
+        if (!this.memberService.member()?.imageUrl) {
+          this.setMainLocalPhoto(photo);
+          console.log('after setMainLocalPhoto:', photo.url);
+        }
       },
       error: (error) => {
         console.log('Error uploading image: ', error);
@@ -48,16 +63,7 @@ export class MemberPhotos implements OnInit {
   setMainPhoto(photo: Photo) {
     this.memberService.setMainPhoto(photo).subscribe({
       next: () => {
-        const currentUser = this.accountService.currentUser();
-        if (currentUser) currentUser.imageUrl = photo.url;
-        this.accountService.setCurrentUser(currentUser as User);
-        this.memberService.member.update(
-          (member) =>
-            ({
-              ...member,
-              imageUrl: photo.url,
-            } as Member)
-        );
+        this.setMainLocalPhoto(photo);
       },
     });
   }
@@ -68,5 +74,38 @@ export class MemberPhotos implements OnInit {
         this.photos.update((photos) => photos.filter((x) => x.id !== photoId));
       },
     });
+  }
+
+  // private setMainLocalPhoto(photo: Photo) {
+  //   const currentUser = this.accountService.currentUser();
+  //   console.log('Setting main photo:', currentUser);
+  //   if (currentUser) currentUser.imageUrl = photo.url;
+  //   console.log('Current user imageUrl after setting:', currentUser?.imageUrl);
+  //   this.accountService.setCurrentUser(currentUser as User);
+
+  //   setTimeout(() => {
+  //     this.memberService.member.update(
+  //       (member) =>
+  //         ({
+  //           ...member,
+  //           imageUrl: photo.url,
+  //         } as Member)
+  //     );
+  //   });
+  // }
+
+  private setMainLocalPhoto(photo: Photo) {
+    const currentUser = this.accountService.currentUser();
+    if (currentUser) currentUser.imageUrl = photo.url;
+    this.accountService.setCurrentUser(currentUser as User);
+
+    this.memberService.member.update(
+      (member) =>
+        ({
+          ...member,
+          imageUrl: photo.url,
+        } as Member)
+    );
+    this.cdr.markForCheck();
   }
 }

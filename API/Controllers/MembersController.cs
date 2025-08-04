@@ -1,8 +1,8 @@
-using System;
 using System.Security.Claims;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,33 +10,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class MembersController : BaseApiController
+    public class MembersController(IMemberRepository memberRepository,
+        IPhotoService photoService) : BaseApiController
     {
-        private readonly ILogger<MembersController>? _logger;
-        private readonly IMemberRepository memberRepository;
-        private readonly IPhotoService photoService;
-
-        public MembersController(IMemberRepository memberRepository,
-            IPhotoService photoService,
-            ILogger<MembersController> logger)
-        {
-            this.memberRepository = memberRepository;
-            this.photoService = photoService;
-            _logger = logger;
-        }
-
-        [HttpGet("test-log")]
-        public IActionResult TestLog()
-        {
-            _logger?.LogInformation("TestLog endpoint hit");
-Console.WriteLine("TestLog endpoint hit");
-            return Ok();
-        }
-
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers()
+        public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers(
+                [FromQuery] MemberParams memberParams)
         {
-            return Ok(await memberRepository.GetMembersAsync());
+            memberParams.CurrentMemberId = User.GetMemberId();
+
+            return Ok(await memberRepository.GetMembersAsync(memberParams));
         }
 
         [HttpGet("{id}")] // locahost:5001/api/members/bob-id
@@ -112,19 +95,16 @@ Console.WriteLine("TestLog endpoint hit");
         [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
-            Console.WriteLine("Setting main photo for member with ID: and photo ID: {}");
             var member = await memberRepository.GetMemberForUpdate(User.GetMemberId());
 
-Console.WriteLine($"member: {member?.Id ?? "null"}"); // Add before null check
-if (member == null) return BadRequest("Cannot get member from token");
+            if (member == null) return BadRequest("Cannot get member from token");
 
             var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
-Console.WriteLine($"member.ImageUrl: {member.ImageUrl}, photo.Url: {photo?.Url}"); // Debug log
 
             if (member.ImageUrl == photo?.Url || photo == null)
             {
                 return BadRequest("Cannot set this as main image");
-}
+            }
 
             member.ImageUrl = photo.Url;
             member.User.ImageUrl = photo.Url;
