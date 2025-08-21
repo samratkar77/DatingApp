@@ -8,3 +8,14 @@ npm start
 ng serve --ssl --ssl-key "server.key" --ssl-cert "server.crt"
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -config openssl.cnf
+
+ var member = await memberRepository.GetMemberForUpdate(User.GetMemberId());
+ return Ok(   await memberRepository.GetPhotosForMemberAsync(id));
+ 
+ 
+ docker compose ps
+ docker exec -it sql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Password@1
+
+
+"DefaultConnection": "Server=localhost,1433;Database=datingapp;User Id=SA;Password=Password@1;TrustServerCertificate=True;"
+Serv

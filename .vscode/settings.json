@@ -1,4 +1,6 @@
 {
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "appService.defaultWebAppToDeploy": "/subscriptions/246be2b8-0747-46aa-bb37-091456e50fa0/resourceGroups/DefaultResourceGroup-SCUS/providers/Microsoft.Web/sites/rahi",
+  "appService.deploySubpath": "API\\bin\\Publish"
 }
